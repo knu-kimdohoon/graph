@@ -43,7 +43,7 @@ VERTEX* FindVertex(GRAPH* gptr, char data) {
 	found = gptr->headVertex;
 	char check = '\0';
 	for (int i = 0; i < gptr->count; i++) {
-		check = *(char*)found->dataPtr;
+		check = (char*)found->dataPtr;
 		if (check == data)
 			return found;
 		else
@@ -60,8 +60,8 @@ int InsertVertex(GRAPH* gptr, char data) {
 		printf("failed to create vertex\n");
 		return 1;
 	}
-	newVertex->dataPtr = (void*)data;
-	printf("%c\n", *(char*)newVertex->dataPtr);
+	newVertex->dataPtr = data;
+	printf("%c\n", newVertex->dataPtr);
 	newVertex->pnextVertex = NULL;
 	newVertex->pArc = NULL;
 	newVertex->inDegree = 0;
@@ -117,7 +117,7 @@ void destroyGraph(GRAPH* gptr) {
 	}
 	free(gptr);
 }
-/*
+
 int InsertArc(GRAPH* gptr, char start, char dest) {
 	VERTEX* startVertex = NULL;
 	VERTEX* destVertex = NULL;
@@ -158,6 +158,7 @@ int InsertArc(GRAPH* gptr, char start, char dest) {
 					preArc->pNextArc = newArc;
 				startVertex->outDegree++;
 				destVertex->inDegree++;
+				return 0;
 			}
 		}
 		preArc->pNextArc = newArc;
@@ -166,4 +167,63 @@ int InsertArc(GRAPH* gptr, char start, char dest) {
 		return 0;
 	}
 }
-*/
+
+void PrintGraph(GRAPH* gptr) {
+	VERTEX* Vtemp = gptr->headVertex;
+	ARC* Atemp = NULL;
+	while (Vtemp != NULL) {
+		Atemp = Vtemp->pArc;
+		printf("%c : ", Vtemp->dataPtr);
+		while (Atemp != NULL) {
+			printf("%c ", Atemp->destination->dataPtr);
+			Atemp = Atemp->pNextArc;
+		}
+		printf("\n");
+		Vtemp = Vtemp->pnextVertex;
+	}
+}
+
+void DepthFirstTraversal(VERTEX* start) {
+	ARC* Atemp = NULL;
+	if (start->visited == true)
+		return;
+	printf("%c ", start->dataPtr);
+	start->visited = true;
+	for (Atemp = start->pArc; Atemp != NULL; Atemp = Atemp->pNextArc) {
+		if (Atemp->destination->visited == false)
+			DepthFirstTraversal(Atemp->destination);
+	}
+}
+
+void ClearVisit(GRAPH* gptr) {
+	VERTEX* Vtemp = gptr->headVertex;
+	while (Vtemp != NULL) {
+		Vtemp->visited = false;
+		Vtemp = Vtemp->pnextVertex;
+	}
+	return;
+}
+
+void BreadthFirstTraversal(GRAPH* gptr, char data) {
+	VERTEX* Vtemp = NULL;
+	Queue* q = createQueue();
+	ARC* Atemp = NULL;
+	char a;
+	enqueue(q, data);
+	while (isEmptyQueue(q) == false) {
+		a = dequeue(q);
+		Vtemp = FindVertex(gptr, a);
+		if (Vtemp->visited == false) {
+			printf("%c ", Vtemp->dataPtr);
+			Vtemp->visited = true;
+		}
+		for (Atemp = Vtemp->pArc; Atemp != NULL; Atemp = Atemp->pNextArc) {
+			if (Atemp->destination->visited == false) {
+				enqueue(q, Atemp->destination->dataPtr);
+			}
+		}
+	}
+	return;
+}
+
+
