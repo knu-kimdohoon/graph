@@ -28,7 +28,7 @@ void main() {
 	}
 	fseek(fp, 0, SEEK_SET);
 	fgetc(fp);
-	/*
+	
 	while ((a = fgetc(fp)) != EOF) {
 		if ((a != ' ') && (a != '\n')) {
 			if (count == 0) {
@@ -44,7 +44,27 @@ void main() {
 				count = 0;
 			}
 		}
-	}*/
+	}
+	printf("\n");
+	printf("The graph is : \n");
+	PrintGraph(gptr);
+	printf("\n");
+
+	printf("Depth First Traversal : ");
+	fseek(fp, 0, SEEK_SET);
+	a = fgetc(fp);
+	if ((a != ' ') && (a != '\n'))
+		DepthFirstTraversal(FindVertex(gptr, a));
+	printf("\n");
+	ClearVisit(gptr);
+	printf("\n");
+
+	printf("Breadth First Traversal : ");
+	fseek(fp, 0, SEEK_SET);
+	a = fgetc(fp);
+	if ((a != ' ') && (a != '\n'))
+		BreadthFirstTraversal(gptr, a);
+	ClearVisit(gptr);
 	destroyGraph(gptr);
 	fclose(fp);
 }
